@@ -15,4 +15,5 @@ interface SurveyService {
     fun save(freeAnswerSurvey: FreeAnsSurvey)
 
     fun findByIdAndType(id: Int, surveyType: String): Survey?
+    fun findByIdAndAnswerType(surveyId: Int, answerType: String): Survey?
 }

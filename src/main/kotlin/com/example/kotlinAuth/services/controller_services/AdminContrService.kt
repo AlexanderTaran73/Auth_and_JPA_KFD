@@ -25,7 +25,6 @@ class AdminContrService(
 
     fun createSingleAnsSurvey(singleAnsSurDTO: SingleAnsSurDTO): ResponseEntity<Any>{
         val singleAnsSurvey = SingleAnsSurvey().also {
-            it.surveyType = "SingleAnsSurvey"
             it.question = singleAnsSurDTO.question
         }
 
@@ -44,7 +43,6 @@ class AdminContrService(
 
     fun createMultyAnsSurvey(multyAnsSurDTO: MultyAnsSurDTO): ResponseEntity<Any>{
         val multyAnsSurvey = MultyAnsSurvey().also {
-            it.surveyType = "MultyAnsSurvey"
             it.question = multyAnsSurDTO.question
         }
 
@@ -62,7 +60,6 @@ class AdminContrService(
 
     fun createFreeAnsSurvey(freeAnsSurDTO: FreeAnsSurDTO): ResponseEntity<Any> {
         val freeAnsSurvey = FreeAnsSurvey().also {
-            it.surveyType = "FreeAnsSurvey"
             it.question = freeAnsSurDTO.question
         }
 

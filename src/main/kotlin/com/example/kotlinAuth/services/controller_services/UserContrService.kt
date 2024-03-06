@@ -27,54 +27,57 @@ class UserContrService(
         return ResponseEntity(surveyService.publicFindAll(), HttpStatus.OK)
     }
 
-    fun answerSurvey(answerDTO: AnswerDTO, request: HttpServletRequest): ResponseEntity<Any> {
+    fun answerSurvey(answerDTO: AnswerDTO, request: HttpServletRequest): ResponseEntity<Any> {  //TODO: добавить проверку на принадлежность ответа к определенному опросу
         val bearer = request.getHeader(JwtFilter.AUTHORIZATION)
         val token = if (StringUtils.hasText(bearer) && bearer.startsWith("Bearer ")) { bearer.substring(7) } else null
         val user = userService.findByEmail(jwtProvider.getEmailFromToken(token))
 
-        val survey = surveyService.findByIdAndType(answerDTO.surveyId, answerDTO.surveyType)
+        val survey = surveyService.findByIdAndAnswerType(answerDTO.surveyId, answerDTO.answerType!!)
         if (survey == null || user == null) return ResponseEntity(HttpStatus.BAD_REQUEST)
 
         when (answerDTO) {
             is SingleAnsDTO -> {
-                if (survey.surveyType != "SingleAnsSurvey") return ResponseEntity(HttpStatus.BAD_REQUEST)
-                survey as SingleAnsSurvey
-
-                val singleAnswer = SingleAnswer().also {
-                    it.possibleAnswer = answerDTO.possibleAnswer
-                    it.user = user
+                if (survey is SingleAnsSurvey) {
+                    SingleAnswer().also {
+                        it.usersId = user.id
+                        it.possibleAnswer = answerDTO.possibleAnswer
+                        survey.singleAnswers!!.add(it)
+                        surveyService.save(survey)
+                        return ResponseEntity(HttpStatus.CREATED)
+                    }
                 }
-                survey.singleAnswers!!.add(singleAnswer)
-                surveyService.save(survey)
+
             }
             is MultyAnsDTO -> {
-                if (survey.surveyType != "MultyAnsSurvey") return ResponseEntity(HttpStatus.BAD_REQUEST)
-                survey as MultyAnsSurvey
-
-                val multyAnswer = MultyAnswer().also {
-                    it.possibleAnswers = answerDTO.possibleAnswers
-                    it.user = user
+                if (survey is MultyAnsSurvey) {
+                    MultyAnswer().also {
+                        it.usersId = user.id
+                        it.possibleAnswers = answerDTO.possibleAnswers
+                        survey.multyAnswers!!.add(it)
+                        surveyService.save(survey)
+                        return ResponseEntity(HttpStatus.CREATED)
+                    }
                 }
-                survey.multyAnswers!!.add(multyAnswer)
-                surveyService.save(survey)
+
             }
             is FreeAnsDTO -> {
-                if (survey.surveyType != "FreeAnsSurvey") return ResponseEntity(HttpStatus.BAD_REQUEST)
-                survey as FreeAnsSurvey
-
-                val freeAnswer = FreeAnswer().also {
-                    it.answer = answerDTO.answer
-                    it.user = user
+                if (survey is FreeAnsSurvey) {
+                    FreeAnswer().also {
+                        it.usersId = user.id
+                        it.answer = answerDTO.answer
+                        survey.freeAnswers!!.add(it)
+                        surveyService.save(survey)
+                        return ResponseEntity(HttpStatus.CREATED)
+                    }
                 }
-                survey.freeAnswers!!.add(freeAnswer)
-                surveyService.save(survey)
+
             }
             else -> {
                 return ResponseEntity(HttpStatus.BAD_REQUEST)
             }
         }
 
-        return ResponseEntity(HttpStatus.CREATED)
+        return ResponseEntity(HttpStatus.BAD_REQUEST)
     }
 }
 

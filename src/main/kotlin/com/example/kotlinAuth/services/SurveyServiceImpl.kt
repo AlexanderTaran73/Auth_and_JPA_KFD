@@ -64,5 +64,14 @@ class SurveyServiceImpl(
         return null
 
     }
+
+    override fun findByIdAndAnswerType(surveyId: Int, answerType: String): Survey? {
+        when(answerType){
+            "SingleAns" -> return singleAnsSurveyRepository.findById(surveyId).orElse(null)
+            "MultyAns" -> return multyAnsSurveyRepository.findById(surveyId).orElse(null)
+            "FreeAns" -> return freeAnsSurveyRepository.findById(surveyId).orElse(null)
+        }
+        return null
+    }
 }
 

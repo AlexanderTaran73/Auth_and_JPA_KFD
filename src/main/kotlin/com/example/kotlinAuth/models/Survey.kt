@@ -10,9 +10,6 @@ abstract class Survey {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     var id: Int = 0
-//  TODO: удалить surveyType
-    @Column
-    var surveyType: String? = null
 
     @Column
     var question: String? = null

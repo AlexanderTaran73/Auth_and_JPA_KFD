@@ -20,9 +20,8 @@ abstract class Answer {
     @GeneratedValue(strategy = GenerationType.AUTO)
     var id: Int = 0
 
-    @OneToOne
-    @JoinColumn
-    var user: User? = null
+    @Column
+    var usersId: Int = 0
 }
 
 @Entity
