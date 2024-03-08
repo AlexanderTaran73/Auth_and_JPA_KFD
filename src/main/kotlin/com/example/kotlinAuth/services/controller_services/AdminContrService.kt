@@ -3,6 +3,7 @@ package com.example.kotlinAuth.services.controller_services
 import com.example.kotlinAuth.controllers.FreeAnsSurDTO
 import com.example.kotlinAuth.controllers.MultyAnsSurDTO
 import com.example.kotlinAuth.controllers.SingleAnsSurDTO
+import com.example.kotlinAuth.controllers.SurDTO
 import com.example.kotlinAuth.models.FreeAnsSurvey
 import com.example.kotlinAuth.models.MultyAnsSurvey
 import com.example.kotlinAuth.models.PossibleAnswer
@@ -21,6 +22,15 @@ class AdminContrService(
 
     fun getAllUsers(): ResponseEntity<Any> {
         return ResponseEntity(userService.findAll(), HttpStatus.OK)
+    }
+
+    fun createSurvey(surDTO: SurDTO): ResponseEntity<Any> {
+        when(surDTO.surType){
+            "SingleAnsSur" -> return createSingleAnsSurvey(surDTO as SingleAnsSurDTO)
+            "MultyAnsSur" -> return createMultyAnsSurvey(surDTO as MultyAnsSurDTO)
+            "FreeAnsSur" -> return createFreeAnsSurvey(surDTO as FreeAnsSurDTO)
+            else -> return ResponseEntity(HttpStatus.BAD_REQUEST)
+        }
     }
 
     fun createSingleAnsSurvey(singleAnsSurDTO: SingleAnsSurDTO): ResponseEntity<Any>{
@@ -80,6 +90,4 @@ class AdminContrService(
         return ResponseEntity(surveyService.findByIdAndType(id, surveyType) , HttpStatus.OK)
 
     }
-
-
 }

@@ -27,7 +27,7 @@ class UserContrService(
         return ResponseEntity(surveyService.publicFindAll(), HttpStatus.OK)
     }
 
-    fun answerSurvey(answerDTO: AnswerDTO, request: HttpServletRequest): ResponseEntity<Any> {  //TODO: добавить проверку на принадлежность ответа к определенному опросу
+    fun answerSurvey(answerDTO: AnswerDTO, request: HttpServletRequest): ResponseEntity<Any> {
         val bearer = request.getHeader(JwtFilter.AUTHORIZATION)
         val token = if (StringUtils.hasText(bearer) && bearer.startsWith("Bearer ")) { bearer.substring(7) } else null
         val user = userService.findByEmail(jwtProvider.getEmailFromToken(token))
@@ -39,6 +39,9 @@ class UserContrService(
             is SingleAnsDTO -> {
                 if (survey is SingleAnsSurvey) {
                     SingleAnswer().also {
+
+                        if (!(isAnswerInPossibleAnswers(answerDTO.possibleAnswer, survey.possibleAnswers))) return ResponseEntity(HttpStatus.BAD_REQUEST)
+
                         it.usersId = user.id
                         it.possibleAnswer = answerDTO.possibleAnswer
                         survey.singleAnswers!!.add(it)
@@ -51,6 +54,11 @@ class UserContrService(
             is MultyAnsDTO -> {
                 if (survey is MultyAnsSurvey) {
                     MultyAnswer().also {
+
+                        answerDTO.possibleAnswers.forEach(){
+                            if (!(isAnswerInPossibleAnswers(it, survey.possibleAnswers))) return ResponseEntity(HttpStatus.BAD_REQUEST)
+                        }
+
                         it.usersId = user.id
                         it.possibleAnswers = answerDTO.possibleAnswers
                         survey.multyAnswers!!.add(it)
@@ -78,6 +86,15 @@ class UserContrService(
         }
 
         return ResponseEntity(HttpStatus.BAD_REQUEST)
+    }
+
+
+
+    fun isAnswerInPossibleAnswers(possibleAnswer: PossibleAnswer, possibleAnswers: MutableList<PossibleAnswer>): Boolean{
+        possibleAnswers.forEach(){
+            if (it.answer == possibleAnswer.answer && it.id == possibleAnswer.id) return true
+        }
+        return false
     }
 }
 

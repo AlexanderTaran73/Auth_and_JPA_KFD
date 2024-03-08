@@ -3,6 +3,8 @@ package com.example.kotlinAuth.controllers
 
 import com.example.kotlinAuth.models.PossibleAnswer
 import com.example.kotlinAuth.services.controller_services.AdminContrService
+import com.fasterxml.jackson.annotation.JsonSubTypes
+import com.fasterxml.jackson.annotation.JsonTypeInfo
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
@@ -22,20 +24,10 @@ class AdminController(
     fun getAllUsers(): ResponseEntity<Any>{
         return adminContrService.getAllUsers()
     }
-//    TODO: Объеденить создания опросов в одну функцию
-    @PostMapping("/surveys/createSurvey/singleAns")
-    fun createSingleAnsSurvey(@RequestBody surDTO: SingleAnsSurDTO): ResponseEntity<Any>{
-        return adminContrService.createSingleAnsSurvey(surDTO)
-    }
 
-    @PostMapping("/surveys/createSurvey/multyAns")
-    fun createMultyAnsSurvey(@RequestBody surDTO: MultyAnsSurDTO): ResponseEntity<Any>{
-        return adminContrService.createMultyAnsSurvey(surDTO)
-    }
-
-    @PostMapping("/surveys/createSurvey/freeAns")
-    fun createFreeAnsSurvey(@RequestBody surDTO: FreeAnsSurDTO): ResponseEntity<Any>{
-        return adminContrService.createFreeAnsSurvey(surDTO)
+    @PostMapping("/surveys/createSurvey")
+    fun createSurvey(@RequestBody surDTO: SurDTO): ResponseEntity<Any>{
+        return adminContrService.createSurvey(surDTO)
     }
 
     @GetMapping("/surveys/getAllSurvey")
@@ -49,21 +41,35 @@ class AdminController(
     }
 }
 
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "surType", visible = true)
+@JsonSubTypes(
+    JsonSubTypes.Type(value = SingleAnsSurDTO::class, name = "SingleAnsSur"),
+    JsonSubTypes.Type(value = MultyAnsSurDTO::class, name = "MultyAnsSur"),
+    JsonSubTypes.Type(value = FreeAnsSurDTO::class, name = "FreeAnsSur")
+)
+open class SurDTO(
+    open val question: String,
+    open val surType: String
+)
+
 class SingleAnsSurDTO(
-    val question: String,
+    override val question: String,
+    override val surType: String,
     val possibleAnswers: MutableList<PossibleAnswer>
 
-)
+): SurDTO(question, surType)
 
 class MultyAnsSurDTO(
-    val question: String,
+    override val question: String,
+    override val surType: String,
     val possibleAnswers: MutableList<PossibleAnswer>
 
-    )
+    ): SurDTO(question, surType)
 
 class FreeAnsSurDTO(
-    val question: String
-)
+    override val question: String,
+    override val surType: String,
+): SurDTO(question, surType)
 
 
 class PossibleAnsDTO(
