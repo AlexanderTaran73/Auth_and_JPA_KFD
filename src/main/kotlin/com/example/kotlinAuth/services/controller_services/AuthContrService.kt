@@ -25,7 +25,8 @@ class AuthContrService (
         val user = userService.findByEmail(authDTO.email)
         if (user == null) return ResponseEntity(Message("User with this email was not found"), HttpStatus.BAD_REQUEST)
         if (!passwordEncoder.matches(authDTO.password, user.password)) return ResponseEntity(Message("Password is not correct"), HttpStatus.BAD_REQUEST)
-        return ResponseEntity(TokenDTO(jwtProvider.generateToken(user.email)), HttpStatus.OK)
+        //        TODO change getting roles
+        return ResponseEntity(TokenDTO(jwtProvider.generateToken(user.email, List(1){user.roleid!!.name})), HttpStatus.OK)
     }
 
     fun Registration(authDTO: AuthDTO): ResponseEntity<Any> {
@@ -36,7 +37,8 @@ class AuthContrService (
         user.password = passwordEncoder.encode(authDTO.password)
         user.roleid = roleService.findById(0)
         userService.save(user)
-        return ResponseEntity(TokenDTO(jwtProvider.generateToken(user.email)), HttpStatus.CREATED)
+        //        TODO change getting roles
+        return ResponseEntity(TokenDTO(jwtProvider.generateToken(user.email, List(1){user.roleid!!.name})), HttpStatus.CREATED)
     }
 
 }

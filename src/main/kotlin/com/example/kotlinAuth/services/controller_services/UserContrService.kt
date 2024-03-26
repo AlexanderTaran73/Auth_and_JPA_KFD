@@ -27,10 +27,14 @@ class UserContrService(
         return ResponseEntity(surveyService.publicFindAll(), HttpStatus.OK)
     }
 
+//    TODO учесть, что пользователя из keycloak ожет не быть в бд
     fun answerSurvey(answerDTO: AnswerDTO, request: HttpServletRequest): ResponseEntity<Any> {
+
         val bearer = request.getHeader(JwtFilter.AUTHORIZATION)
         val token = if (StringUtils.hasText(bearer) && bearer.startsWith("Bearer ")) { bearer.substring(7) } else null
-        val user = userService.findByEmail(jwtProvider.getEmailFromToken(token))
+
+        val userEmail = jwtProvider.getEmailFromToken(token)
+        val user = userService.findByEmail(userEmail ?: "")
 
         val survey = surveyService.findByIdAndAnswerType(answerDTO.surveyId, answerDTO.answerType!!)
         if (survey == null || user == null) return ResponseEntity(HttpStatus.BAD_REQUEST)

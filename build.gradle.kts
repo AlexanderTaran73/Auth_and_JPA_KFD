@@ -28,6 +28,7 @@ dependencies {
 	runtimeOnly("org.postgresql:postgresql")
 	implementation("io.jsonwebtoken:jjwt:0.9.1")
 	implementation("javax.xml.bind:jaxb-api:2.3.0-b170201.1204")
+	implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
 
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("org.springframework.security:spring-security-test")

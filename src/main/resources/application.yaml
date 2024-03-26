@@ -12,5 +12,17 @@ spring:
   jpa:
     generate-ddl: true
     show-sql: true
+  security:
+    oauth2:
+      client:
+        registration:
+          keycloak:
+            client-id: auth-and-jpa-kfd
+            authorization-grant-type: authorization_code
+            scope: openid
+        provider:
+          keycloak:
+            issuer-uri: http://localhost:8080/realms/kotlinAuth
+            user-name-attribute: preferred_username
 
 

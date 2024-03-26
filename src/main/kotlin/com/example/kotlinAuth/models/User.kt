@@ -16,6 +16,7 @@ class User {
     @Column
     var password = ""
 
+//    TODO add ManyToMany for roles and users
     @ManyToOne(optional = false)
     @JoinColumn
     var roleid: Role? = null
