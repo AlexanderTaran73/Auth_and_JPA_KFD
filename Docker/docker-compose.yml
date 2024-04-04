@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  kotlinauth:
+    build:
+      context: .
+      dockerfile: Dockerfile_kotlinauth
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+      - keycloak
+    networks:
+      - kotlinauth-network
+
+  db:
+    build:
+      context: .
+      dockerfile: Dockerfile_bd
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: user
+    ports:
+      - "5431:5432"
+    networks:
+      - kotlinauth-network
+
+  keycloak:
+    image: my-keycloak-image:v1
+    ports:
+      - "8080:8080"
+    networks:
+      - kotlinauth-network
+
+networks:
+  kotlinauth-network:
+    driver: bridge

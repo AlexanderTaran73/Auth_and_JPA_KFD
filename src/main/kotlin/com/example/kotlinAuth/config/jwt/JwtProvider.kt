@@ -20,7 +20,7 @@ class JwtProvider {
     var jwtSecret = "7Tnx6|iVJ8?fk{9"
 
     val jwtKeycloakDecoder: JwtDecoder = JwtDecoders.fromIssuerLocation("http://localhost:8080/realms/kotlinAuth")
-
+// host.docker.internal
     fun generateToken(email: String?, roles: List<String>): String {
         val date = Date.from(LocalDate.now().plusDays(15).atStartOfDay(ZoneId.systemDefault()).toInstant())
 
