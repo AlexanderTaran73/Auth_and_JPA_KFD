@@ -1,5 +1,6 @@
 package com.example.kotlinAuth.config.jwt
 
+import io.micrometer.observation.annotation.Observed
 import jakarta.servlet.FilterChain
 import jakarta.servlet.ServletException
 import jakarta.servlet.ServletRequest

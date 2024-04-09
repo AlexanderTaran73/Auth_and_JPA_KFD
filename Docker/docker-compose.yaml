@@ -1,0 +1,109 @@
+version: '3.8'
+
+services:
+
+  kotlinauth:
+    build:
+      context: .
+      dockerfile: Dockerfile_kotlinauth
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+      - keycloak
+    networks:
+      - kotlinauth-network
+
+  db:
+    build:
+      context: .
+      dockerfile: Dockerfile_bd
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: user
+    ports:
+      - "5431:5432"
+    networks:
+      - kotlinauth-network
+
+  keycloak:
+    image: my-keycloak-image:v1
+    environment:
+      KC_HEALTH_ENABLED: 'true'
+      KC_METRICS_ENABLED: 'true'
+    ports:
+      - "8080:8080"
+    networks:
+      - kotlinauth-network
+
+  prometheus:
+    image: prom/prometheus
+    command: ["--config.file=/prometheus.yaml"]
+    volumes:
+      - ./prometheus.yaml:/prometheus.yaml
+    ports:
+      - "9090:9090"
+    networks:
+      - kotlinauth-network
+
+  postgresql_exporter:
+    image: bitnami/postgres-exporter:latest
+    environment:
+      DATA_SOURCE_NAME: "postgresql://postgres:user@db:5432/postgres?sslmode=disable"
+    ports:
+      - "9187:9187"
+    networks:
+      - kotlinauth-network
+
+  grafana:
+    image: grafana/grafana
+    volumes:
+      - ./grafana/provisioning:/etc/grafana/provisioning
+      - ./grafana/grafana.ini:/etc/grafana/grafana.ini
+    ports:
+      - "3000:3000"
+    networks:
+      - kotlinauth-network
+
+  loki:
+    image: grafana/loki
+    command: [ "--config.file=/etc/loki/loki.yml" ]
+    environment:
+      - JAEGER_AGENT_HOST=tempo
+      - JAEGER_ENDPOINT=http://tempo:14268/api/traces
+      - JAEGER_SAMPLER_TYPE=const
+      - JAEGER_SAMPLER_PARAM=1
+    volumes:
+      - ./loki/loki.yml:/etc/loki/loki.yml
+    ports:
+      - "3100:3100"
+    networks:
+      - kotlinauth-network
+
+  promtail:
+    image: grafana/promtail
+    command: [ "--config.file=/etc/promtail/promtail.yml" ]
+    volumes:
+      - ./promtail/promtail.yml:/etc/promtail/promtail.yml
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - kotlinauth-network
+
+  tempo:
+    image: grafana/tempo
+    command: [ "-config.file=/etc/tempo.yaml" ]
+    volumes:
+      - ./tempo/tempo.yaml:/etc/tempo.yaml
+    ports:
+      - "9411:9411"
+    networks:
+      - kotlinauth-network
+
+
+
+
+
+
+networks:
+  kotlinauth-network:
+    driver: bridge

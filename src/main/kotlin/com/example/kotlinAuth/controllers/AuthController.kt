@@ -1,6 +1,7 @@
 package com.example.kotlinAuth.controllers
 
 import com.example.kotlinAuth.services.controller_services.AuthContrService
+import io.micrometer.observation.annotation.Observed
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController
 
 
 @RestController
+@Observed(name = "AuthController")
 @RequestMapping("/auth")
 class AuthController(
     private val authContrService: AuthContrService

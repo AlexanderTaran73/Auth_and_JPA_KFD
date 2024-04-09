@@ -10,11 +10,13 @@ import com.example.kotlinAuth.models.PossibleAnswer
 import com.example.kotlinAuth.models.SingleAnsSurvey
 import com.example.kotlinAuth.services.SurveyService
 import com.example.kotlinAuth.services.UserService
+import io.micrometer.observation.annotation.Observed
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
 
 @Service
+@Observed(name = "AdminContrService")
 class AdminContrService(
     private val userService: UserService,
     private val surveyService: SurveyService
@@ -81,6 +83,7 @@ class AdminContrService(
     fun getAllSurvey(): ResponseEntity<Any> {
         return ResponseEntity(surveyService.findAll(), HttpStatus.OK)
     }
+
 
     fun getSurveyResult(id: Int, surveyType: String): ResponseEntity<Any> {
         val survey = surveyService.findByIdAndType(id, surveyType)

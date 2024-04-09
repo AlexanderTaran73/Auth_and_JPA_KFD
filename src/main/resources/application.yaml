@@ -4,8 +4,11 @@ server:
     context-path: "/api"
 
 spring:
+  application:
+    name: kotlin_auth
+
   datasource:
-    url: jdbc:postgresql://localhost:5432/kotlin_auth
+    url: jdbc:postgresql://db:5432/kotlin_auth
     username: postgres
     password: user
     driver-class-name: org.postgresql.Driver
@@ -22,7 +25,18 @@ spring:
             scope: openid
         provider:
           keycloak:
-            issuer-uri: http://localhost:8080/realms/kotlinAuth
+            issuer-uri: http://keycloak:8080/realms/kotlinAuth
             user-name-attribute: preferred_username
 
 
+management:
+  tracing:
+    sampling:
+      probability: 1.0
+  zipkin:
+    tracing:
+      endpoint: http://tempo:9411/api/v2/spans
+
+logging:
+  pattern:
+    level: "%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]"

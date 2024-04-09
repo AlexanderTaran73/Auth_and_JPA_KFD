@@ -30,6 +30,17 @@ dependencies {
 	implementation("javax.xml.bind:jaxb-api:2.3.0-b170201.1204")
 	implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
 
+	implementation("org.jetbrains.kotlin:kotlin-reflect")
+	implementation("org.springframework.boot:spring-boot-starter-actuator")
+	implementation("org.springframework:spring-aspects")
+
+	implementation("io.micrometer:micrometer-tracing-bridge-otel")
+	implementation("io.opentelemetry:opentelemetry-exporter-zipkin")
+
+	implementation("net.ttddyy.observation:datasource-micrometer-spring-boot:1.0.3")
+
+	runtimeOnly("com.github.loki4j:loki-logback-appender:1.3.2")
+
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("org.springframework.security:spring-security-test")
 }

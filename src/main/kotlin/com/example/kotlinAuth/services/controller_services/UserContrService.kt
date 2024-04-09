@@ -9,6 +9,7 @@ import com.example.kotlinAuth.controllers.SingleAnsDTO
 import com.example.kotlinAuth.models.*
 import com.example.kotlinAuth.services.SurveyService
 import com.example.kotlinAuth.services.UserService
+import io.micrometer.observation.annotation.Observed
 import jakarta.servlet.http.HttpServletRequest
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -17,11 +18,14 @@ import org.springframework.util.StringUtils
 
 
 @Service
+@Observed(name = "UserContrService")
 class UserContrService(
     private val surveyService: SurveyService,
     private val jwtProvider: JwtProvider,
     private val userService: UserService
 ) {
+
+
 
     fun getAllSurvey(): ResponseEntity<Any> {
         return ResponseEntity(surveyService.publicFindAll(), HttpStatus.OK)

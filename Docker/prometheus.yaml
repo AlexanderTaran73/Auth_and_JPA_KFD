@@ -1,0 +1,30 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  - job_name: 'postgresql'
+    static_configs:
+      - targets: ['postgresql_exporter:9187']
+    metrics_path: /metrics
+    params:
+      sslmode: ['disable']
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: postgresql_exporter:9187
+
+  - job_name: 'keycloak'
+    static_configs:
+      - targets: ['keycloak:8080']
+    metrics_path: /metrics
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        replacement: keycloak:8080
+      - source_labels: [__address__]
+        target_label: group
+        replacement: canary

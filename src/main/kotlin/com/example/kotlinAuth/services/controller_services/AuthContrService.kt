@@ -7,6 +7,7 @@ import com.example.kotlinAuth.controllers.TokenDTO
 import com.example.kotlinAuth.models.User
 import com.example.kotlinAuth.services.RoleService
 import com.example.kotlinAuth.services.UserService
+import io.micrometer.observation.annotation.Observed
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.crypto.password.PasswordEncoder
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service
 
 
 @Service
+@Observed(name = "AuthContrService")
 class AuthContrService (
     private val userService: UserService,
     private val roleService: RoleService,
@@ -28,6 +30,7 @@ class AuthContrService (
         //        TODO change getting roles
         return ResponseEntity(TokenDTO(jwtProvider.generateToken(user.email, List(1){user.roleid!!.name})), HttpStatus.OK)
     }
+
 
     fun Registration(authDTO: AuthDTO): ResponseEntity<Any> {
         val user = User()

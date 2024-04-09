@@ -5,6 +5,7 @@ import com.example.kotlinAuth.models.PossibleAnswer
 import com.example.kotlinAuth.services.controller_services.AdminContrService
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
+import io.micrometer.observation.annotation.Observed
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController
 
 
 @RestController
+@Observed(name = "AdminController")
 @RequestMapping("/admin")
 class AdminController(
     private val adminContrService: AdminContrService

@@ -6,6 +6,7 @@ import com.example.kotlinAuth.services.controller_services.UserContrService
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
 import com.fasterxml.jackson.annotation.JsonTypeName
+import io.micrometer.observation.annotation.Observed
 import jakarta.servlet.http.HttpServletRequest
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController
 
 
 @RestController
+@Observed(name = "UserController")
 @RequestMapping("/user")
 class UserController(
     private val userContrService: UserContrService
